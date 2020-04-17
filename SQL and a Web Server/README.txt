@@ -13,7 +13,7 @@ Commit #:
 
 2. Assignment Specific Topics
 
-    A) Time Tracking
+    A) Time Tracking 
 
             Expected Time to Complete: 18 hours.
 

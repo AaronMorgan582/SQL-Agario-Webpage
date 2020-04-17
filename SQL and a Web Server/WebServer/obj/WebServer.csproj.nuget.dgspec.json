@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\xavie\\source\\repos\\assignment-9-web-server-and-sql-quaranteens\\SQL and a Web Server\\WebServer\\WebServer.csproj": {}
+    "C:\\Users\\xavie\\Source\\Repos\\assignment-9-web-server-and-sql-quaranteens\\SQL and a Web Server\\WebServer\\WebServer.csproj": {}
   },
   "projects": {
-    "C:\\Users\\xavie\\source\\repos\\assignment-9-web-server-and-sql-quaranteens\\SQL and a Web Server\\WebServer\\WebServer.csproj": {
+    "C:\\Users\\xavie\\Source\\Repos\\assignment-9-web-server-and-sql-quaranteens\\SQL and a Web Server\\WebServer\\WebServer.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\xavie\\source\\repos\\assignment-9-web-server-and-sql-quaranteens\\SQL and a Web Server\\WebServer\\WebServer.csproj",
+        "projectUniqueName": "C:\\Users\\xavie\\Source\\Repos\\assignment-9-web-server-and-sql-quaranteens\\SQL and a Web Server\\WebServer\\WebServer.csproj",
         "projectName": "WebServer",
-        "projectPath": "C:\\Users\\xavie\\source\\repos\\assignment-9-web-server-and-sql-quaranteens\\SQL and a Web Server\\WebServer\\WebServer.csproj",
+        "projectPath": "C:\\Users\\xavie\\Source\\Repos\\assignment-9-web-server-and-sql-quaranteens\\SQL and a Web Server\\WebServer\\WebServer.csproj",
         "packagesPath": "C:\\Users\\xavie\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\xavie\\source\\repos\\assignment-9-web-server-and-sql-quaranteens\\SQL and a Web Server\\WebServer\\obj\\",
+        "outputPath": "C:\\Users\\xavie\\Source\\Repos\\assignment-9-web-server-and-sql-quaranteens\\SQL and a Web Server\\WebServer\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\xavie\\AppData\\Roaming\\NuGet\\NuGet.Config",
