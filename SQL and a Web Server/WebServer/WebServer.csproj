@@ -12,4 +12,13 @@
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="Logger">
+      <HintPath>..\..\..\School\CS3500\Labs\lab-Chat_Client_Server\lib\Logger.dll</HintPath>
+    </Reference>
+    <Reference Include="Networking">
+      <HintPath>..\..\..\assignment-eight-agario-client-team-yoshi\Agario\libs\Networking.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>
