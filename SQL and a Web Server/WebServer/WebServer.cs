@@ -7,8 +7,8 @@ namespace WebServerExample
     /// <summary>
     /// Initial Author: H. James de St. Germain
     /// Initial Date:   Spring 2020
-    /// Main Author:    you
-    /// Update Date:    now
+    /// Main Author:    Aaron Morgan and Xavier Davis
+    /// Update Date:    4/19/20
     /// 
     /// Code for a simple Web Server
     /// </summary>
@@ -54,7 +54,12 @@ namespace WebServerExample
         private static string BuildHTTPResponseHeader(string message)
         {
             // modify this to return am HTTP Response header, don't forget the new line!
-            return "";
+            return $@"HTTP/1.1 200 OK
+                    \r\nDate: {DateTime.Now}
+                    \r\nContent-Length: {message.Length}
+                    \r\nContent-Type: text/html
+                    \r\nConnection: Closed
+                    ";
         }
 
         /// <summary>
@@ -65,11 +70,13 @@ namespace WebServerExample
         /// <returns> A string the represents a web page.</returns>
         private static string BuiltHTTPBody()
         {
-            // FIXME: this should be a complete web page.
-            return $@"
-<h1>hello world{counter}</h1>
-<a href='localhost:11000'>Reload</a> 
-<br/>how are you...";
+            string message = $@"
+                                <h1>hello world{counter}</h1>
+                                <a href='localhost:11000'>Reload</a> 
+                                <br/>how are you...
+                                ";
+
+            return message;
         }
 
         /// <summary>
@@ -88,7 +95,7 @@ namespace WebServerExample
             string message = BuiltHTTPBody();
             string header = BuildHTTPResponseHeader(message);
 
-            return header + message;
+            return header + Environment.NewLine + message;
         }
 
         /// <summary>

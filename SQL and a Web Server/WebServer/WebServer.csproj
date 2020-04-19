@@ -13,6 +13,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\libs\libs.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="Logger">
       <HintPath>..\..\..\School\CS3500\Labs\lab-Chat_Client_Server\lib\Logger.dll</HintPath>
     </Reference>
