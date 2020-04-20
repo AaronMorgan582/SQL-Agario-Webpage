@@ -53,7 +53,7 @@ namespace WebServerExample
         /// <returns></returns>
         private static string BuildHTTPResponseHeader(string message)
         {
-            // modify this to return am HTTP Response header, don't forget the new line!
+            // modify this to return an HTTP Response header, don't forget the new line!
             return $@"HTTP/1.1 200 OK
                     \r\nDate: {DateTime.Now}
                     \r\nContent-Length: {message.Length}
@@ -71,9 +71,26 @@ namespace WebServerExample
         private static string BuiltHTTPBody()
         {
             string message = $@"
-                                <h1>hello world{counter}</h1>
+                                <!DOCTYPE html>
+                                <html>
+                                <head>
+                                    <title> Agario Database </title>
+                                </head>
+                                <body>
+                                <center>
+                                <h1>This is an Agario Database</h1>
+                                <h3>Visits to site: {counter}</h3>
                                 <a href='localhost:11000'>Reload</a> 
-                                <br/>how are you...
+                                <br/><br/>how are you...<br/><br/>
+                                <a href='http://localhost:11000/highscores'>High Score Tab</a> 
+                                <a href='http://localhost:11000/scoregraph'>High Score Graph</a> 
+                                <form>
+                                    <label for='Name Search'>Name Search</label>
+                                    <input type='text' id='Name Search' name='scores'><br/><br/>
+                                </form>
+                                </center>
+                                </body>
+                                </html>
                                 ";
 
             return message;
