@@ -53,7 +53,6 @@ namespace WebServerExample
         /// <returns></returns>
         private static string BuildHTTPResponseHeader(string message)
         {
-            // modify this to return an HTTP Response header, don't forget the new line!
             return $@"HTTP/1.1 200 OK
                     \r\nDate: {DateTime.Now}
                     \r\nContent-Length: {message.Length}
@@ -68,7 +67,7 @@ namespace WebServerExample
         ///   https://www.sitepoint.com/a-basic-html5-template/
         /// </summary>
         /// <returns> A string the represents a web page.</returns>
-        private static string BuiltHTTPBody()
+        private static string Build_Main_Screen()
         {
             string message = $@"
                                 <!DOCTYPE html>
@@ -79,6 +78,34 @@ namespace WebServerExample
                                 <body>
                                 <center>
                                 <h1>This is an Agario Database</h1>
+                                <h3>Visits to site: {counter}</h3>
+                                <a href='localhost:11000'>Reload</a> 
+                                <br/><br/>how are you...<br/><br/>
+                                <a href='http://localhost:11000/highscores'>High Score Tab</a> 
+                                <a href='http://localhost:11000/scoregraph'>High Score Graph</a> 
+                                <form>
+                                    <label for='Name Search'>Name Search</label>
+                                    <input type='text' id='Name Search' name='scores'><br/><br/>
+                                </form>
+                                </center>
+                                </body>
+                                </html>
+                                ";
+
+            return message;
+        }
+
+        private static string Build_HighScore_Screen()
+        {
+            string message = $@"
+                                <!DOCTYPE html>
+                                <html>
+                                <head>
+                                    <title> Agario High Scores </title>
+                                </head>
+                                <body>
+                                <center>
+                                <h1>Agario High Scores</h1>
                                 <h3>Visits to site: {counter}</h3>
                                 <a href='localhost:11000'>Reload</a> 
                                 <br/><br/>how are you...<br/><br/>
@@ -107,9 +134,9 @@ namespace WebServerExample
         ///  The body is an HTML string.
         /// </summary>
         /// <returns></returns>
-        private static string BuildHTTPResponse()
+        private static string BuildHTTPResponse(string get_request)
         {
-            string message = BuiltHTTPBody();
+            string message = get_request;
             string header = BuildHTTPResponseHeader(message);
 
             return header + Environment.NewLine + message;
@@ -128,12 +155,26 @@ namespace WebServerExample
             try
             {
                 // by definition if there is a new line, then the request is done
-                if (network_message_state.Message == "\r")
+                if (network_message_state.Message.Contains("GET /HTTP /1.1"))
                 {
-                    Networking.Send(network_message_state.socket, BuildHTTPResponse());
+              
+                    //Console.WriteLine(network_message_state.Message);
+                    string main_screen = Build_Main_Screen();
+                    Networking.Send(network_message_state.socket, BuildHTTPResponse(main_screen));
 
                     // the message response told the browser to disconnect, but
                     // if they didn't we will do it.
+                    if (network_message_state.socket.Connected)
+                    {
+                        network_message_state.socket.Shutdown(SocketShutdown.Both);
+                        network_message_state.socket.Close();
+                    }
+                }
+                else if (network_message_state.Message.Contains("GET /highscores HTTP/1.1"))
+                {
+                    string high_scores = Build_HighScore_Screen();
+                    Networking.Send(network_message_state.socket, BuildHTTPResponse(high_scores));
+
                     if (network_message_state.socket.Connected)
                     {
                         network_message_state.socket.Shutdown(SocketShutdown.Both);

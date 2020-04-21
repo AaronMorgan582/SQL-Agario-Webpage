@@ -18,11 +18,11 @@ Commit #:
             Expected Time to Complete: 18 hours.
 
                 Time spent on Analysis: 2.5
-                Time spent on Implementation: 1
-                Time spent Debugging: 
-                Time spent Testing: 1
+                Time spent on Implementation: 1.5
+                Time spent Debugging: 0.25 
+                Time spent Testing: 1.25
 
-            Total Time: 5 hours.
+            Total Time: 7 hours.
 
 3. Database Table Summary:
 
