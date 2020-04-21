@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Data.SqlClient;
+using System.Data;
+using Microsoft.Extensions.Configuration;
 
 namespace Database
 {
-    public static class AgarioDatabase
+    public class AgarioDatabase
     {
 
         /// <summary>
@@ -18,12 +20,18 @@ namespace Database
         /// </summary>
         static AgarioDatabase()
         {
+            var builder = new ConfigurationBuilder();
+
+            builder.AddUserSecrets<AgarioDatabase>();
+            IConfigurationRoot Configuration = builder.Build();
+            var SelectedSecrets = Configuration.GetSection("AgarioDBSecrets");
+
             connectionString = new SqlConnectionStringBuilder()
             {
-                DataSource = "cs3500.eng.utah.edu,14330",
-                InitialCatalog = "s2020_u1197851",
-                UserID = "s2020_u1197851",
-                Password = "barrel11Roll:webserver",
+                DataSource = SelectedSecrets["AgarioDataSource"],
+                InitialCatalog = SelectedSecrets["AgarioInitialCatalog"],
+                UserID = SelectedSecrets["AgarioUserID"],
+                Password = SelectedSecrets["AgarioDBPassword"],
                 ConnectTimeout = 15
             }.ConnectionString;
         }
@@ -49,7 +57,11 @@ namespace Database
                         Console.WriteLine("\n---------- JOIN Patrons and Phone Numbers ---------------");
                         PatronsPhones();*/
 
-            Get_HighScores();
+            DataSet test_set = Get_HighScores_Test();
+            foreach (DataRow my_data_row in test_set.Tables["HighScores"].Rows)
+            {
+                Console.WriteLine(my_data_row[0]);
+            }
         }
 
 
@@ -167,7 +179,7 @@ namespace Database
                 Console.WriteLine($"Error in SQL connection:\n   - {exception.Message}");
             }
 
-            return 
+            return high_scores; 
         }
 
 
@@ -231,6 +243,29 @@ namespace Database
             {
                 Console.WriteLine($"Error in SQL connection:\n   - {exception.Message}");
             }
+        }
+
+        public static DataSet Get_HighScores_Test()
+        {
+            DataSet my_data_set = new DataSet();
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    con.Open();
+
+                    string sql_command = "SELECT * FROM HighScores";
+                    SqlDataAdapter my_sql_data_adapter = new SqlDataAdapter(sql_command, con);
+
+                    my_sql_data_adapter.Fill(my_data_set, "HighScores");
+                }
+            }
+            catch (SqlException exception)
+            {
+                Console.WriteLine($"Error in SQL connection:\n   - {exception.Message}");
+            }
+
+            return my_data_set;
         }
     }
 
