@@ -13,12 +13,12 @@ namespace Database
         /// <summary>
         /// The information necessary for the program to connect to the Database
         /// </summary>
-        public static readonly string connectionString;
+        public readonly string connectionString;
 
         /// <summary>
         /// Upon construction of this static class, build the connection string
         /// </summary>
-        static AgarioDatabase()
+        public AgarioDatabase()
         {
             var builder = new ConfigurationBuilder();
 
@@ -43,8 +43,8 @@ namespace Database
         /// <param name="args"></param>
         public static void Main(string[] args)
         {
-
-            Console.WriteLine(connectionString);
+            AgarioDatabase testDatabase = new AgarioDatabase();
+            Console.WriteLine(testDatabase.connectionString);
             /*            Console.WriteLine("\n---------- Read All Patrons ---------------");
                         AllPatrons();
 
@@ -57,10 +57,13 @@ namespace Database
                         Console.WriteLine("\n---------- JOIN Patrons and Phone Numbers ---------------");
                         PatronsPhones();*/
 
-            DataSet test_set = Get_HighScores_Test();
+            DataSet test_set = testDatabase.Get_HighScores_Test();
             foreach (DataRow my_data_row in test_set.Tables["HighScores"].Rows)
             {
-                Console.WriteLine(my_data_row[0]);
+                foreach(DataColumn my_data_column in test_set.Tables["HighScores"].Columns)
+                {
+                    Console.WriteLine(my_data_row[my_data_column]);
+                }
             }
         }
 
@@ -74,7 +77,7 @@ namespace Database
         /// (3) how to write a direct SQL query and send it to the server
         /// (4) how to retrieve the data
         /// </summary>
-        static void AllPatrons()
+        void AllPatrons()
         {
             Console.WriteLine("Getting Connection ...");
 
@@ -118,7 +121,7 @@ namespace Database
         /// Note:
         ///   (1) Fails because the user does not have permission to do so!
         /// </summary>
-        static void AddPatrons()
+        void AddPatrons()
         {
             Console.WriteLine("Can we add a row?");
 
@@ -153,7 +156,7 @@ namespace Database
         /// (1) use of "dictionary" access
         /// (2) Select [named columns] syntax 
         /// </summary>
-        public static List<string> Get_HighScores()
+        public List<string> Get_HighScores()
         {
             List<string> high_scores = new List<string>();
             try
@@ -189,7 +192,7 @@ namespace Database
         ///  
         ///  Notice: Explicit JOIN
         /// </summary>
-        public static void PatronsPhones()
+        public void PatronsPhones()
         {
 
             Console.WriteLine("What phone numbers exist?");
@@ -217,7 +220,7 @@ namespace Database
             }
         }
 
-        private static void InsertPatron()
+        private void InsertPatron()
         {
 
             Console.WriteLine("What phone numbers exist?");
@@ -245,7 +248,7 @@ namespace Database
             }
         }
 
-        public static DataSet Get_HighScores_Test()
+        public DataSet Get_HighScores_Test()
         {
             DataSet my_data_set = new DataSet();
             try
@@ -254,7 +257,7 @@ namespace Database
                 {
                     con.Open();
 
-                    string sql_command = "SELECT * FROM HighScores";
+                    string sql_command = "SELECT * FROM HighScores ORDER BY LargestMass DESC";
                     SqlDataAdapter my_sql_data_adapter = new SqlDataAdapter(sql_command, con);
 
                     my_sql_data_adapter.Fill(my_data_set, "HighScores");

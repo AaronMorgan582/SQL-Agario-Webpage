@@ -1,5 +1,7 @@
-﻿using NetworkingNS;
+﻿using Database;
+using NetworkingNS;
 using System;
+using System.Data;
 using System.Net.Sockets;
 
 namespace WebServerExample
@@ -106,21 +108,65 @@ namespace WebServerExample
                                 <body>
                                 <center>
                                 <h1>Agario High Scores</h1>
-                                <h3>Visits to site: {counter}</h3>
-                                <a href='localhost:11000'>Reload</a> 
-                                <br/><br/>how are you...<br/><br/>
-                                <a href='http://localhost:11000/highscores'>High Score Tab</a> 
-                                <a href='http://localhost:11000/scoregraph'>High Score Graph</a> 
-                                <form>
-                                    <label for='Name Search'>Name Search</label>
-                                    <input type='text' id='Name Search' name='scores'><br/><br/>
-                                </form>
+                                
+                                <table style= 'width: 100 %' cellpadding='10' border = '1'>
+                                 <tbody>
+                                    <tr>
+                                    <th> Name </th>
+                                    <th> Max Mass </th>
+                                    <th> Time Alive </th>
+                                    <th> Highest Rank </th>
+                                    </tr>";      
+                               message += High_Score_Table_Info();
+                               message += @"
+                                </tbody>
+                                </table>
                                 </center>
                                 </body>
                                 </html>
                                 ";
+            // cReate sql reader object => something like array that can loop through 
+/*            < table >
+          < tbody >
+            < tr >
+            < th > Name </ th >
+            < th > Max Mass </ th >
+            < th > Time Alive </ th >
+            < th > Highest Rank </ th >
+            </ tr > ";
+
+            foreach (var row in high_score_list)
+            {
+                
+            }
+
+            message += $@"
+          </tbody>*/
 
             return message;
+        }
+
+        /// <summary>
+        /// message += $"<tr><td><a href='/scores/{row.name}'>{row.name}</a></td><td>{row.max_mass} Units</td><td>{row.lifetime} seconds</td></tr>";
+        /// </summary>
+        /// <returns></returns>
+        private static string High_Score_Table_Info()
+        {
+            AgarioDatabase database = new AgarioDatabase();
+            DataSet high_score_set = database.Get_HighScores_Test();
+            string table_info = $"<tr>";
+            foreach (DataRow my_data_row in high_score_set.Tables["HighScores"].Rows)
+            {
+                foreach (DataColumn my_data_column in high_score_set.Tables["HighScores"].Columns)
+                {
+
+                    table_info += "<td>" + my_data_row[my_data_column] + "</td>";
+                }
+                table_info += "</tr>";
+                table_info += "<tr>";
+            }
+            table_info += "</tr>";
+            return table_info;
         }
 
         /// <summary>
