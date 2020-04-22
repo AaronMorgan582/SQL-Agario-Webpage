@@ -97,7 +97,7 @@ namespace WebServerExample
             return message;
         }
 
-        private static string Build_HighScore_Screen()
+        private static string Build_HighScore_Page()
         {
             string message = $@"
                                 <!DOCTYPE html>
@@ -110,17 +110,20 @@ namespace WebServerExample
                                 <h1>Agario High Scores</h1>
                                 
                                 <table style= 'width: 100 %' cellpadding='10' border = '1'>
-                                 <tbody>
-                                    <tr>
-                                    <th> Name </th>
-                                    <th> Max Mass </th>
-                                    <th> Time Alive </th>
-                                    <th> Highest Rank </th>
-                                    </tr>";      
-                               message += High_Score_Table_Info();
-                               message += @"
-                                </tbody>
+                                    <tbody>
+                                        <tr>
+                                            <th> Name </th>
+                                            <th> Max Mass </th>
+                                            <th> Time Alive </th>
+                                            <th> Highest Rank </th>
+                                        </tr>";      
+                               
+                                message += High_Score_Table_Info();
+                                message += @"
+
+                                    </tbody>
                                 </table>
+
                                 </center>
                                 </body>
                                 </html>
@@ -165,7 +168,7 @@ namespace WebServerExample
                 table_info += "</tr>";
                 table_info += "<tr>";
             }
-            table_info += "</tr>";
+            table_info += "</tr>"; //Maybe substring the last <tr> instead?
             return table_info;
         }
 
@@ -201,7 +204,7 @@ namespace WebServerExample
             try
             {
                 // by definition if there is a new line, then the request is done
-                if (network_message_state.Message.Contains("GET /HTTP /1.1"))
+                if (network_message_state.Message.Contains("GET / HTTP/1.1"))
                 {
               
                     //Console.WriteLine(network_message_state.Message);
@@ -218,7 +221,7 @@ namespace WebServerExample
                 }
                 else if (network_message_state.Message.Contains("GET /highscores HTTP/1.1"))
                 {
-                    string high_scores = Build_HighScore_Screen();
+                    string high_scores = Build_HighScore_Page();
                     Networking.Send(network_message_state.socket, BuildHTTPResponse(high_scores));
 
                     if (network_message_state.socket.Connected)
