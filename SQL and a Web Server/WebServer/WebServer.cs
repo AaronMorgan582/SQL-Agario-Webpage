@@ -82,7 +82,6 @@ namespace WebServerExample
                                 <h1>This is an Agario Database</h1>
                                 <h3>Visits to site: {counter}</h3>
                                 <a href='localhost:11000'>Reload</a> 
-                                <br/><br/>how are you...<br/><br/>
                                 <a href='http://localhost:11000/highscores'>High Score Tab</a> 
                                 <a href='http://localhost:11000/timeinfirst'>Time in First Place</a>
                                 <form>
@@ -191,16 +190,15 @@ namespace WebServerExample
         {
             AgarioDatabase database = new AgarioDatabase();
             DataSet high_score_set = database.Get_HighScores();
-            string table_info = $"<tr>";
+            string table_info = "<tr>";
             foreach (DataRow my_data_row in high_score_set.Tables["HighScores"].Rows)
             {
                 foreach (DataColumn my_data_column in high_score_set.Tables["HighScores"].Columns)
                 {
-
                     table_info += "<td>" + my_data_row[my_data_column] + "</td>";
                 }
                 table_info += "</tr>";
-                table_info += "<tr";
+                table_info += "<tr>";
             }
             table_info += "</tr>"; //Maybe substring the last <tr> instead?
             return table_info;

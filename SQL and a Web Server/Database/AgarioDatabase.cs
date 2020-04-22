@@ -28,10 +28,10 @@ namespace Database
 
             connectionString = new SqlConnectionStringBuilder()
             {
-                DataSource = SelectedSecrets["AgarioDataSource"],
-                InitialCatalog = SelectedSecrets["AgarioInitialCatalog"],
-                UserID = SelectedSecrets["AgarioUserID"],
-                Password = SelectedSecrets["AgarioDBPassword"],
+                DataSource = SelectedSecrets["ServerURL"],
+                InitialCatalog = SelectedSecrets["DBName"],
+                UserID = SelectedSecrets["UserName"],
+                Password = SelectedSecrets["DBPassword"],
                 ConnectTimeout = 15
             }.ConnectionString;
         }
