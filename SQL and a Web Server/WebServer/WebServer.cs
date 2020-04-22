@@ -84,7 +84,7 @@ namespace WebServerExample
                                 <a href='localhost:11000'>Reload</a> 
                                 <br/><br/>how are you...<br/><br/>
                                 <a href='http://localhost:11000/highscores'>High Score Tab</a> 
-                                <a href='http://localhost:11000/scoregraph'>High Score Graph</a> 
+                                <a href='http://localhost:11000/timeinfirst'>Time in First Place</a>
                                 <form>
                                     <label for='Name Search'>Name Search</label>
                                     <input type='text' id='Name Search' name='scores'><br/><br/>
@@ -150,13 +150,47 @@ namespace WebServerExample
         }
 
         /// <summary>
+        ///   Create a web page!  The body of the returned message is the web page
+        ///   "code" itself. Usually this would start with the HTML tag.  Take a look at:
+        ///   https://www.sitepoint.com/a-basic-html5-template/
+        /// </summary>
+        /// <returns> A string the represents a web page.</returns>
+        private static string Build_First_Place_Length_Page()
+        {
+            string message = $@"
+                                <!DOCTYPE html>
+                                <html>
+                                <head>
+                                    <title> First Place Leaderboards </title>
+                                </head>
+                                <body style='background-color:#89cff0;'>
+                                <center>
+                                <h1>Longest Times in First Place</h1>
+                                <table style= 'width: 100 %; background-color: gold;' cellpadding='10' border = '1'>
+                                    <tbody>
+                                        <tr>
+                                            <th style='background-color:white;'> Name </th>
+                                            <th style='background-color:white;'> Total Time In First </th>
+                                        </tr>";
+                                message += Time_In_First_Table_Info();
+                                message += @"
+                                </tbody>
+                                </table>
+                                </center>
+                                </body>
+                                </html>";
+
+            return message;
+        }
+
+        /// <summary>
         /// message += $"<tr><td><a href='/scores/{row.name}'>{row.name}</a></td><td>{row.max_mass} Units</td><td>{row.lifetime} seconds</td></tr>";
         /// </summary>
         /// <returns></returns>
         private static string High_Score_Table_Info()
         {
             AgarioDatabase database = new AgarioDatabase();
-            DataSet high_score_set = database.Get_HighScores_Test();
+            DataSet high_score_set = database.Get_HighScores();
             string table_info = $"<tr>";
             foreach (DataRow my_data_row in high_score_set.Tables["HighScores"].Rows)
             {
@@ -164,6 +198,29 @@ namespace WebServerExample
                 {
 
                     table_info += "<td>" + my_data_row[my_data_column] + "</td>";
+                }
+                table_info += "</tr>";
+                table_info += "<tr";
+            }
+            table_info += "</tr>"; //Maybe substring the last <tr> instead?
+            return table_info;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        private static string Time_In_First_Table_Info()
+        {
+            AgarioDatabase database = new AgarioDatabase();
+            DataSet time_in_first = database.Get_First_Times();
+            string table_info = $"<tr>"; 
+            foreach (DataRow my_data_row in time_in_first.Tables["TimeInFirst"].Rows)
+            {
+                foreach (DataColumn my_data_column in time_in_first.Tables["TimeInFirst"].Columns)
+                {
+
+                    table_info += "<td style='background-color:white;'>" + my_data_row[my_data_column] + "</td>";
                 }
                 table_info += "</tr>";
                 table_info += "<tr>";
@@ -223,6 +280,17 @@ namespace WebServerExample
                 {
                     string high_scores = Build_HighScore_Page();
                     Networking.Send(network_message_state.socket, BuildHTTPResponse(high_scores));
+
+                    if (network_message_state.socket.Connected)
+                    {
+                        network_message_state.socket.Shutdown(SocketShutdown.Both);
+                        network_message_state.socket.Close();
+                    }
+                }
+                else if(network_message_state.Message.Contains("GET /timeinfirst HTTP/1.1"))
+                {
+                    string first_place_length = Build_First_Place_Length_Page();
+                    Networking.Send(network_message_state.socket, BuildHTTPResponse(first_place_length));
 
                     if (network_message_state.socket.Connected)
                     {
