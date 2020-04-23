@@ -145,11 +145,11 @@ namespace WebServerExample
                                             <th> Name </th>
                                             <th> Mass </th>
                                             <th> Rank </th>
-                                            <th> Start Time </th>
-                                            <th> End Time </th>
+                                            <th> Time Played </th>
+                                            <th> Game Session </th>
                                         </tr>";
 
-                                message += Player_Table_Info();
+                                message += Player_Table_Info(name);
                                 message += @"
 
                                     </tbody>
@@ -268,8 +268,8 @@ namespace WebServerExample
 
                     if(split_message.Length == 4)
                     {
-                        string name = split_message[2];
-
+                        // grabs the player name from the network message, minus " HTTP"
+                        string name = split_message[2].Substring(0, split_message[2].Length - 5);
                         string sent_player_database = Build_Player_Page(name);
                         Networking.Send(network_message_state.socket, BuildHTTPResponse(sent_player_database));
 
@@ -278,6 +278,29 @@ namespace WebServerExample
                             network_message_state.socket.Shutdown(SocketShutdown.Both);
                             network_message_state.socket.Close();
                         }
+                    }
+                    else if(split_message.Length == 8)
+                    {
+                        float mass;
+                        int rank;
+                        long start_time;
+                        long end_time;
+                        string name = split_message[2];
+                        float.TryParse(split_message[3], out mass);
+                        int.TryParse(split_message[4], out rank);
+                        long.TryParse(split_message[5], out start_time);
+                        long.TryParse(split_message[6].Substring(0, split_message[6].Length - 5), out end_time);
+                        long total_time = end_time - start_time;
+
+                        TimeSpan converted_time = TimeSpan.FromMilliseconds(total_time);
+                        string time_played = string.Format("{0:D2}h:{1:D2}m:{2:D2}s:{3:D3}ms",
+                                                converted_time.Hours,
+                                                converted_time.Minutes,
+                                                converted_time.Seconds,
+                                                converted_time.Milliseconds);
+                        // Insert networking message into sql table
+                        AgarioDatabase database = new AgarioDatabase();
+                        database.Insert_Player_Data(name, mass, rank, time_played);
                     }
                 }
             }
@@ -299,12 +322,12 @@ namespace WebServerExample
             return Build_Table_Data(high_score_set, "HighScores");
         }
 
-        private static string Player_Table_Info()
+        private static string Player_Table_Info(string player_name)
         {
             AgarioDatabase database = new AgarioDatabase();
-            DataSet player_score_set = database.Get_Player_Data();
+            DataSet player_score_set = database.Get_Player_Data(player_name);
 
-            return Build_Table_Data(player_score_set, "PlayerData");
+            return Build_Table_Data(player_score_set, $"{player_name}Data");
         }
 
         /// <summary>

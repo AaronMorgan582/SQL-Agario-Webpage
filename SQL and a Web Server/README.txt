@@ -18,11 +18,11 @@ Commit #:
             Expected Time to Complete: 18 hours.
 
                 Time spent on Analysis: 4
-                Time spent on Implementation: 5
-                Time spent Debugging: 0.5 
-                Time spent Testing: 1.5
+                Time spent on Implementation: 6
+                Time spent Debugging: 1.5 
+                Time spent Testing: 2.5
 
-            Total Time: 11 hours.
+            Total Time: 14 hours.
 
 3. Database Table Summary:
 
@@ -45,7 +45,10 @@ Commit #:
     3) Stack Overflow: Iterate through DataSet https://stackoverflow.com/questions/10822304/iterate-through-dataset
     4) DeveloperFusion: ADO.NET: Populate a DataSet from a Database http://quickstart.developerfusion.co.uk/quickstart/howto/doc/adoplus/GetDataFromDB.aspx
     5) w3schools.com: HTML <table> border Attribute https://www.w3schools.com/tags/att_table_border.asp
-    6) w3schools.com: HTML <table> cellpadding Attribute https://www.w3schools.com/tags/att_table_cellpadding.asp 
-
+    6) w3schools.com: HTML <table> cellpadding Attribute https://www.w3schools.com/tags/att_table_cellpadding.asp
+    7) Stack Overflow: What's wrong with my IF/ELSE? “ELSE: Incorrect syntax near 'ELSE'.” https://stackoverflow.com/questions/27696510/whats-wrong-with-my-if-else-else-incorrect-syntax-near-else
+    8) w3schools.com: SQL ALTER TABLE Statement: https://www.w3schools.com/sql/sql_alter.asp
+    9) Stack Overflow: Convert milliseconds to human readable time lapse: https://stackoverflow.com/questions/9993883/convert-milliseconds-to-human-readable-time-lapse
+    10) Stack Overflow: Check if table exists and if it doesn't exist, create it in SQL Server 2008: https://stackoverflow.com/questions/5952006/check-if-table-exists-and-if-it-doesnt-exist-create-it-in-sql-server-2008
 
 

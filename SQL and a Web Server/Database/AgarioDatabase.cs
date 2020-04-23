@@ -13,7 +13,7 @@ namespace Database
         /// <summary>
         /// The information necessary for the program to connect to the Database
         /// </summary>
-        public readonly string connectionString;
+        public readonly string connection_string;
 
         /// <summary>
         /// Upon construction of this static class, build the connection string
@@ -26,7 +26,7 @@ namespace Database
             IConfigurationRoot Configuration = builder.Build();
             var SelectedSecrets = Configuration.GetSection("AgarioDBSecrets");
 
-            connectionString = new SqlConnectionStringBuilder()
+            connection_string = new SqlConnectionStringBuilder()
             {
                 DataSource = SelectedSecrets["ServerURL"],
                 InitialCatalog = SelectedSecrets["DBName"],
@@ -44,7 +44,7 @@ namespace Database
         public static void Main(string[] args)
         {
             AgarioDatabase testDatabase = new AgarioDatabase();
-            Console.WriteLine(testDatabase.connectionString);
+            Console.WriteLine(testDatabase.connection_string);
 
             DataSet test_set = testDatabase.Get_HighScores();
             foreach (DataRow my_data_row in test_set.Tables["HighScores"].Rows)
@@ -63,7 +63,7 @@ namespace Database
 
             try
             {
-                using (SqlConnection con = new SqlConnection(connectionString))
+                using (SqlConnection con = new SqlConnection(connection_string))
                 {
                     con.Open();
 
@@ -86,25 +86,7 @@ namespace Database
 
         public DataSet Get_HighScores()
         {
-            DataSet my_data_set = new DataSet();
-            try
-            {
-                using (SqlConnection con = new SqlConnection(connectionString))
-                {
-                    con.Open();
-
-                    string sql_command = "SELECT * FROM HighScores ORDER BY LargestMass DESC";
-                    SqlDataAdapter my_sql_data_adapter = new SqlDataAdapter(sql_command, con);
-
-                    my_sql_data_adapter.Fill(my_data_set, "HighScores");
-                }
-            }
-            catch (SqlException exception)
-            {
-                Console.WriteLine($"Error in SQL connection:\n   - {exception.Message}");
-            }
-
-            return my_data_set;
+            return Build_DataSet(connection_string, "HighScores", "LargestMass");
         }
 
         /// <summary>
@@ -113,17 +95,70 @@ namespace Database
         /// <returns></returns>
         public DataSet Get_First_Times()
         {
+            return Build_DataSet(connection_string, "TimeInFirst", "TotalTime");
+        }
+
+        public DataSet Get_Player_Data(string player_name)
+        {
+            return Build_DataSet(connection_string, $"{player_name}Data", "Mass");
+        }
+
+        public DataSet Insert_Player_Data(string player_name, float mass, int rank, string time)
+        {
+            string table_name = player_name + "Data";
+            DataSet my_data_set = new DataSet();
+            Console.WriteLine(time);
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connection_string))
+                {
+                    con.Open();
+                    string sql_command = @$"IF OBJECT_ID('{table_name}') IS NULL
+                                                BEGIN
+                                                CREATE TABLE {table_name} (
+                                                PlayerName varchar(50) NOT NULL,
+                                                Mass float NOT NULL,
+                                                Rank int NOT NULL,
+                                                TimePlayed varchar(50) NOT NULL,
+	                                            GameSession int identity(1,1) NOT NULL
+                                                )   
+                                                INSERT INTO {table_name} (PlayerName, Mass, Rank, TimePlayed)
+                                                VALUES
+                                                ('{player_name}', {mass}, {rank}, '{time}')
+                                                END
+                                            ELSE
+                                                BEGIN
+                                                INSERT INTO {table_name} (PlayerName, Mass, Rank, TimePlayed)
+                                                VALUES
+                                                ('{player_name}', {mass}, {rank}, '{time}')
+                                                END;
+                                                ";
+                    SqlDataAdapter my_sql_data_adapter = new SqlDataAdapter(sql_command, con);
+
+                    my_sql_data_adapter.Fill(my_data_set, $"{table_name}");
+                }
+            }
+            catch (SqlException exception)
+            {
+                Console.WriteLine($"Error in SQL connection:\n   - {exception.Message}");
+            }
+
+            return my_data_set;
+        }
+
+        private static DataSet Build_DataSet(string connection_string, string table_name, string column_name)
+        {
             DataSet my_data_set = new DataSet();
             try
             {
-                using (SqlConnection con = new SqlConnection(connectionString))
+                using (SqlConnection con = new SqlConnection(connection_string))
                 {
                     con.Open();
 
-                    string sql_command = "SELECT * FROM TimeInFirst ORDER BY TotalTime DESC";
+                    string sql_command = $"SELECT * FROM {table_name} ORDER BY {column_name} DESC";
                     SqlDataAdapter my_sql_data_adapter = new SqlDataAdapter(sql_command, con);
 
-                    my_sql_data_adapter.Fill(my_data_set, "TimeInFirst");
+                    my_sql_data_adapter.Fill(my_data_set, $"{table_name}");
                 }
             }
             catch (SqlException exception)
@@ -131,16 +166,6 @@ namespace Database
                 Console.WriteLine($"Error in SQL connection:\n   - {exception.Message}");
             }
             return my_data_set;
-        }
-
-        public DataSet Get_Player_Data()
-        {
-            throw new NotImplementedException();
-        }
-
-        private static DataSet Build_DataSet(string table_name, string column_name)
-        {
-            
         }
     }
 
