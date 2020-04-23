@@ -132,6 +132,16 @@ namespace Database
             }
             return my_data_set;
         }
+
+        public DataSet Get_Player_Data()
+        {
+            throw new NotImplementedException();
+        }
+
+        private static DataSet Build_DataSet(string table_name, string column_name)
+        {
+            
+        }
     }
 
 }

@@ -3,6 +3,7 @@ using NetworkingNS;
 using System;
 using System.Data;
 using System.Net.Sockets;
+using System.Text.RegularExpressions;
 
 namespace WebServerExample
 {
@@ -51,7 +52,7 @@ namespace WebServerExample
         ///        
         /// See: https://www.tutorialspoint.com/http/http_responses.htm
         /// </summary>
-        /// <param name="message">the message is necessary because... FIXME</param>
+        /// <param name="message">The message is necessary because Content-Length will vary, corresponding to how long the body of the HTML message is</param>
         /// <returns></returns>
         private static string BuildHTTPResponseHeader(string message)
         {
@@ -64,12 +65,11 @@ namespace WebServerExample
         }
 
         /// <summary>
-        ///   Create a web page!  The body of the returned message is the web page
-        ///   "code" itself. Usually this would start with the HTML tag.  Take a look at:
-        ///   https://www.sitepoint.com/a-basic-html5-template/
+        ///   This creates the body of the HTML message, which in turn creates
+        ///   the main web page.
         /// </summary>
         /// <returns> A string the represents a web page.</returns>
-        private static string Build_Main_Screen()
+        private static string Build_Main_Page()
         {
             string message = $@"
                                 <!DOCTYPE html>
@@ -90,9 +90,7 @@ namespace WebServerExample
                                 </form>
                                 </center>
                                 </body>
-                                </html>
-                                ";
-
+                                </html>";
             return message;
         }
 
@@ -125,26 +123,41 @@ namespace WebServerExample
 
                                 </center>
                                 </body>
-                                </html>
-                                ";
-            // cReate sql reader object => something like array that can loop through 
-/*            < table >
-          < tbody >
-            < tr >
-            < th > Name </ th >
-            < th > Max Mass </ th >
-            < th > Time Alive </ th >
-            < th > Highest Rank </ th >
-            </ tr > ";
+                                </html>";
+            return message;
+        }
 
-            foreach (var row in high_score_list)
-            {
-                
-            }
+        private static string Build_Player_Page(string name)
+        {
+            string message = $@"
+                                <!DOCTYPE html>
+                                <html>
+                                <head>
+                                    <title> {name} Scores </title>
+                                </head>
+                                <body>
+                                <center>
+                                <h1>Agario High Scores</h1>
+                                
+                                <table style= 'width: 100 %' cellpadding='10' border = '1'>
+                                    <tbody>
+                                        <tr>
+                                            <th> Name </th>
+                                            <th> Mass </th>
+                                            <th> Rank </th>
+                                            <th> Start Time </th>
+                                            <th> End Time </th>
+                                        </tr>";
 
-            message += $@"
-          </tbody>*/
+                                message += Player_Table_Info();
+                                message += @"
 
+                                    </tbody>
+                                </table>
+
+                                </center>
+                                </body>
+                                </html>";
             return message;
         }
 
@@ -183,51 +196,6 @@ namespace WebServerExample
         }
 
         /// <summary>
-        /// message += $"<tr><td><a href='/scores/{row.name}'>{row.name}</a></td><td>{row.max_mass} Units</td><td>{row.lifetime} seconds</td></tr>";
-        /// </summary>
-        /// <returns></returns>
-        private static string High_Score_Table_Info()
-        {
-            AgarioDatabase database = new AgarioDatabase();
-            DataSet high_score_set = database.Get_HighScores();
-            string table_info = "<tr>";
-            foreach (DataRow my_data_row in high_score_set.Tables["HighScores"].Rows)
-            {
-                foreach (DataColumn my_data_column in high_score_set.Tables["HighScores"].Columns)
-                {
-                    table_info += "<td>" + my_data_row[my_data_column] + "</td>";
-                }
-                table_info += "</tr>";
-                table_info += "<tr>";
-            }
-            table_info += "</tr>"; //Maybe substring the last <tr> instead?
-            return table_info;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        private static string Time_In_First_Table_Info()
-        {
-            AgarioDatabase database = new AgarioDatabase();
-            DataSet time_in_first = database.Get_First_Times();
-            string table_info = $"<tr>"; 
-            foreach (DataRow my_data_row in time_in_first.Tables["TimeInFirst"].Rows)
-            {
-                foreach (DataColumn my_data_column in time_in_first.Tables["TimeInFirst"].Columns)
-                {
-
-                    table_info += "<td style='background-color:white;'>" + my_data_row[my_data_column] + "</td>";
-                }
-                table_info += "</tr>";
-                table_info += "<tr>";
-            }
-            table_info += "</tr>"; //Maybe substring the last <tr> instead?
-            return table_info;
-        }
-
-        /// <summary>
         /// Create a response message string to send back to the connecting
         /// program (i.e., the web browser).  The string is of the form:
         /// 
@@ -258,13 +226,10 @@ namespace WebServerExample
             Console.WriteLine($"{++counter,4}: {network_message_state.Message}");
             try
             {
-                // by definition if there is a new line, then the request is done
-                if (network_message_state.Message.Contains("GET / HTTP/1.1"))
+                if (network_message_state.Message.Equals("GET / HTTP/1.1\r"))
                 {
-              
-                    //Console.WriteLine(network_message_state.Message);
-                    string main_screen = Build_Main_Screen();
-                    Networking.Send(network_message_state.socket, BuildHTTPResponse(main_screen));
+                    string main_page = Build_Main_Page();
+                    Networking.Send(network_message_state.socket, BuildHTTPResponse(main_page));
 
                     // the message response told the browser to disconnect, but
                     // if they didn't we will do it.
@@ -274,7 +239,7 @@ namespace WebServerExample
                         network_message_state.socket.Close();
                     }
                 }
-                else if (network_message_state.Message.Contains("GET /highscores HTTP/1.1"))
+                else if (network_message_state.Message.Equals("GET /highscores HTTP/1.1\r"))
                 {
                     string high_scores = Build_HighScore_Page();
                     Networking.Send(network_message_state.socket, BuildHTTPResponse(high_scores));
@@ -285,7 +250,7 @@ namespace WebServerExample
                         network_message_state.socket.Close();
                     }
                 }
-                else if(network_message_state.Message.Contains("GET /timeinfirst HTTP/1.1"))
+                else if(network_message_state.Message.Equals("GET /timeinfirst HTTP/1.1\r"))
                 {
                     string first_place_length = Build_First_Place_Length_Page();
                     Networking.Send(network_message_state.socket, BuildHTTPResponse(first_place_length));
@@ -296,11 +261,79 @@ namespace WebServerExample
                         network_message_state.socket.Close();
                     }
                 }
+                else if(network_message_state.Message.Contains("scores"))
+                {
+                    string split_character = "/";
+                    string[] split_message = Regex.Split(network_message_state.Message, split_character);
+
+                    if(split_message.Length == 4)
+                    {
+                        string name = split_message[2];
+
+                        string sent_player_database = Build_Player_Page(name);
+                        Networking.Send(network_message_state.socket, BuildHTTPResponse(sent_player_database));
+
+                        if (network_message_state.socket.Connected)
+                        {
+                            network_message_state.socket.Shutdown(SocketShutdown.Both);
+                            network_message_state.socket.Close();
+                        }
+                    }
+                }
             }
             catch (Exception exception)
             {
                 Console.WriteLine($"Something went wrong... this is a bad error message. {exception}");
             }
+        }
+
+        /// <summary>
+        /// message += $"<tr><td><a href='/scores/{row.name}'>{row.name}</a></td><td>{row.max_mass} Units</td><td>{row.lifetime} seconds</td></tr>";
+        /// </summary>
+        /// <returns></returns>
+        private static string High_Score_Table_Info()
+        {
+            AgarioDatabase database = new AgarioDatabase();
+            DataSet high_score_set = database.Get_HighScores();
+
+            return Build_Table_Data(high_score_set, "HighScores");
+        }
+
+        private static string Player_Table_Info()
+        {
+            AgarioDatabase database = new AgarioDatabase();
+            DataSet player_score_set = database.Get_Player_Data();
+
+            return Build_Table_Data(player_score_set, "PlayerData");
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        private static string Time_In_First_Table_Info()
+        {
+            AgarioDatabase database = new AgarioDatabase();
+            DataSet time_in_first = database.Get_First_Times();
+
+            return Build_Table_Data(time_in_first, "TimeInFirst");
+
+        }
+
+        private static string Build_Table_Data(DataSet dataset, string table_name)
+        {
+            string table_info = "<tr>";
+            foreach (DataRow my_data_row in dataset.Tables[table_name].Rows)
+            {
+                foreach (DataColumn my_data_column in dataset.Tables[table_name].Columns)
+                {
+                    table_info += "<td style='background-color:white;'>" + my_data_row[my_data_column] + "</td>";
+                }
+                table_info += "</tr>";
+                table_info += "<tr>";
+            }
+            table_info += "</tr>"; //Maybe substring the last <tr> instead?
+            return table_info;
         }
     }
 }
