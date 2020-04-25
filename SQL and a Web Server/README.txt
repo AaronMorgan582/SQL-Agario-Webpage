@@ -5,7 +5,9 @@ Course:     CS 3500, University of Utah, School of Computing
 Assignment: Assignment #9 - SQL and a Web Server
 Copyright:  CS 3500, Xavier Davis and Aaron Morgan - This work may not be copied for use in Academic Coursework.
 Github Repository: https://github.com/uofu-cs3500-spring20/assignment-9-web-server-and-sql-quaranteens
-Commit #:  
+Commit #: Posted in a Piazza note.
+Github Repository (Assignment 8): https://github.com/uofu-cs3500-spring20/assignment-eight-agario-client-team-yoshi.git
+Commit # (Assignment 8): 0f9086b243e1d3d73cbb75f639dbaad130ac0227
 
 1. Comments to Evaluators:
     
@@ -39,10 +41,10 @@ Commit #:
 
                 Time spent on Analysis: 5.5
                 Time spent on Implementation: 8.5
-                Time spent Debugging: 2
-                Time spent Testing: 5
+                Time spent Debugging: 2.5
+                Time spent Testing: 5.5
 
-            Total Time: 21 hours.
+            Total Time: 22 hours.
 
 3. Database Table Summary:
 

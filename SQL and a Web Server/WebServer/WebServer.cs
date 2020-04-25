@@ -124,9 +124,9 @@ namespace WebServerExample
                                     <tbody>
                                         <tr>
                                             <th> Name </th>
-                                            <th> Max Mass </th>
-                                            <th> Time Alive </th>
-                                            <th> Highest Rank </th>
+                                            <th> Highest Mass Achieved </th>
+                                            <th> Longest Time Alive </th>
+                                            <th> Highest Rank Achieved </th>/f
                                         </tr>";
 
                                 message += High_Score_Table_Info();
@@ -158,7 +158,7 @@ namespace WebServerExample
                                 </head>
                                 <body>
                                 <center>
-                                <h1>Agario High Scores</h1>
+                                <h1>{name}'s High Scores</h1>
                                 <a href='http://localhost:11000/'>Home</a>
                                 <br>
                                 <br>
@@ -345,9 +345,15 @@ namespace WebServerExample
             }
         }
 
-        private static void Send_And_Close_Connection(Socket socket, string database)
+        /// <summary>
+        /// This is a private helper method that sends the HTTP message over the network,
+        /// then closes the connection
+        /// </summary>
+        /// <param name="socket">The socket that is being used for communication</param>
+        /// <param name="message">The string containing the HTTP message</param>
+        private static void Send_And_Close_Connection(Socket socket, string message)
         {
-            Networking.Send(socket, BuildHTTPResponse(database));
+            Networking.Send(socket, BuildHTTPResponse(message));
             // the message response told the browser to disconnect, but
             // if they didn't we will do it.
             if (socket.Connected)

@@ -116,19 +116,19 @@ namespace Database
                                             ELSE
                                                 BEGIN
                                                 DECLARE @HighestRecordedMass float;
-                                                DECLARE @HighestRecordedTimeAlive string;
+                                                DECLARE @HighestRecordedTimeAlive varchar(50);
                                                 DECLARE @HighestRecordedRank int;
 
-                                                SELECT @HighestRecordedMass = Max(Mass) FROM {table_name}
-                                                UPDATE HighScores SET LargestMass = @HighestRecordedScore WHERE PlayerName = '{player_name}'
+                                                SELECT @HighestRecordedMass = MAX(Mass) FROM {table_name}
+                                                UPDATE HighScores SET LargestMass = @HighestRecordedMass WHERE PlayerName = '{player_name}'
 
-                                                SELECT @HighestRecordedTimeAlive = Max(TimePlayed) FROM {table_name}
+                                                SELECT @HighestRecordedTimeAlive = MAX(TimePlayed) FROM {table_name}
                                                 UPDATE HighScores SET LongestTimeAlive = @HighestRecordedTimeAlive WHERE PlayerName = '{player_name}'
 
-                                                SELECT @HighestRecordedRank = Max(Rank) FROM {table_name}
+                                                SELECT @HighestRecordedRank = MIN(Rank) FROM {table_name}
                                                 UPDATE HighScores SET HighestRank = @HighestRecordedRank WHERE PlayerName = '{player_name}'
 
-                                                END";
+                                                END;";
                     SqlDataAdapter my_sql_data_adapter = new SqlDataAdapter(sql_command, con);
 
                     my_sql_data_adapter.Fill(my_data_set, $"{table_name}");
