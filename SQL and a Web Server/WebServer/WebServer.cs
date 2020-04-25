@@ -91,14 +91,10 @@ namespace WebServerExample
                                 <body>
                                 <center>
                                 <h1>This is an Agario Database</h1>
-                                <h3>Visits to site: {counter}</h3>
-                                <a href='http://localhost:11000'>Reload</a> 
-                                <a href='http://localhost:11000/highscores'>High Score Tab</a> 
+                                <a href='http://localhost:11000/highscores'>High Score Tab</a>
+                                <br>
+                                <br>
                                 <a href='http://localhost:11000/timeinfirst'>Time in First Place</a>
-                                <form>
-                                    <label for='Name Search'>Name Search</label>
-                                    <input type='text' id='Name Search' name='scores'><br/><br/>
-                                </form>
                                 </center>
                                 </body>
                                 </html>";
@@ -121,7 +117,9 @@ namespace WebServerExample
                                 <body>
                                 <center>
                                 <h1>Agario High Scores</h1>
-                                
+                                <a href='http://localhost:11000/'>Home</a>
+                                <br>
+                                <br>
                                 <table style= 'width: 100 %' cellpadding='10' border = '1'>
                                     <tbody>
                                         <tr>
@@ -131,8 +129,8 @@ namespace WebServerExample
                                             <th> Highest Rank </th>
                                         </tr>";
 
-            message += High_Score_Table_Info();
-            message += @"
+                                message += High_Score_Table_Info();
+                                message += @"
 
                                     </tbody>
                                 </table>
@@ -161,7 +159,9 @@ namespace WebServerExample
                                 <body>
                                 <center>
                                 <h1>Agario High Scores</h1>
-                                
+                                <a href='http://localhost:11000/'>Home</a>
+                                <br>
+                                <br>
                                 <table style= 'width: 100 %' cellpadding='10' border = '1'>
                                     <tbody>
                                         <tr>
@@ -172,8 +172,8 @@ namespace WebServerExample
                                             <th> Game Session </th>
                                         </tr>";
 
-            message += Player_Table_Info(name);
-            message += @"
+                                message += Player_Table_Info(name);
+                                message += @"
 
                                     </tbody>
                                 </table>
@@ -204,6 +204,11 @@ namespace WebServerExample
                                 <h1>Success!</h1>
                                 <p> Successfully inserted data into the database! Great goin' bucko! ;D</p>
                                 <a href='http://localhost:11000/scores/{name}'>{name}'s Score Page</a>
+                                <br>
+                                <br>
+                                <a href='http://localhost:11000/'>Home</a>
+                                <br>
+                                <br>
                                 </center>
                                 </body>
                                 </html>";
@@ -227,14 +232,19 @@ namespace WebServerExample
                                 <body style='background-color:#89cff0;'>
                                 <center>
                                 <h1>Longest Times in First Place</h1>
+                                <a href='http://localhost:11000/'>Home</a>
+                                <br>
+                                <br>
                                 <table style= 'width: 100 %; background-color: gold;' cellpadding='10' border = '1'>
                                     <tbody>
                                         <tr>
                                             <th style='background-color:white;'> Name </th>
                                             <th style='background-color:white;'> Total Time In First </th>
+                                            <th style='background-color:white;'> Date/Time Player Entered First </th>
+                                            <th style='background-color:white;'> Number of Players Eaten </th>
                                         </tr>";
-            message += Time_In_First_Table_Info();
-            message += @"
+                                message += Time_In_First_Table_Info();
+                                message += @"
                                 </tbody>
                                 </table>
                                 </center>
@@ -322,6 +332,8 @@ namespace WebServerExample
                         // Insert networking message into sql table
                         AgarioDatabase database = new AgarioDatabase();
                         database.Insert_Player_Data(name, mass, rank, time_played);
+                        database.Insert_HighScore_Data(name, mass, rank, time_played);
+
                         string sent_player_database = Build_Confirmation_Page(name);
                         Send_And_Close_Connection(network_message_state.socket, sent_player_database);
                     }
